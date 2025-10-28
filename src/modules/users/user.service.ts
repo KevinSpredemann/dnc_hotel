@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { $Enums, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDTO } from './domain/dto/uptadeUser.dto';
@@ -10,8 +15,12 @@ import { UserSelectFields } from '../prisma/utils/userSelectFields';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
   async create(body: CreateUserDTO): Promise<User> {
+    const user = await this.getByEmail(body.email);
+    if (user) {
+      throw new BadRequestException('User already exists');
+    }
     body.password = await this.hashPassword(body.password);
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: body,
       select: UserSelectFields,
     });
@@ -43,10 +52,9 @@ export class UserService {
     });
   }
 
-  async getByEmail(email: string){
+  async getByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
-      select: UserSelectFields,
     });
   }
   private async isIdExists(id: number) {
