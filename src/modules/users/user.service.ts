@@ -4,10 +4,29 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDTO } from './domain/dto/uptadeUser.dto';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
+import { UserSelectFields } from '../prisma/utils/userSelectFields';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+  async create(body: CreateUserDTO): Promise<User> {
+    body.password = await this.hashPassword(body.password);
+    return this.prisma.user.create({
+      data: body,
+      select: UserSelectFields,
+    });
+  }
+  async getAll() {
+    return this.prisma.user.findMany({
+      select: UserSelectFields,
+    });
+  }
+
+  async getByid(id: number) {
+    const user = await this.isIdExists(id);
+    return user;
+  }
+
   async delete(id: number) {
     await this.isIdExists(id);
     return this.prisma.user.delete({ where: { id } });
@@ -20,25 +39,20 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: body,
+      select: UserSelectFields,
     });
   }
-  async create(body: CreateUserDTO): Promise<User> {
-    body.password = await this.hashPassword(body.password);
-    return this.prisma.user.create({ data: body });
-  }
-  async getAll() {
-    return this.prisma.user.findMany();
-  }
 
-  async getByid(id: number) {
-    const user = await this.isIdExists(id);
-
-    return user;
+  async getByEmail(email: string){
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: UserSelectFields,
+    });
   }
-
   private async isIdExists(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: Number(id) },
+      select: UserSelectFields,
     });
     if (!user) {
       throw new HttpException(
