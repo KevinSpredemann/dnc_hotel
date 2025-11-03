@@ -17,7 +17,7 @@ export class AuthService {
   ) {}
 
   async generateToken(user: User, expiresIn: number = 60 * 60 * 24) {
-    const payload = { sub: user.id, name: user.name };
+    const payload = { sub: user.id, name: user.name, role: user.role };
     const options = {
       expiresIn: expiresIn,
       issuer: 'dnc_hotel',
@@ -66,14 +66,13 @@ export class AuthService {
     return token;
   }
 
-  private async validateToken(token: string): Promise<ValidateTokenDTO> {
+  async validateToken(token: string): Promise<ValidateTokenDTO> {
     try {
       const decoded = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
-        audience: 'users',
         issuer: 'dnc_hotel',
+        audience: 'users',
       });
-      console.log(decoded.issues);
       return { valid: true, decoded };
     } catch (error) {
       return { valid: false, message: error.message };

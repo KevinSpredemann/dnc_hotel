@@ -1,35 +1,54 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUserDTO } from './domain/dto/uptadeUser.dto';
 import { ParamId } from '../../shared/decorators/paramId.decorator';
+import { AuthGuard } from '../../shared/guards/auth.guard';
+import { Role } from '@prisma/client';
+import { Roles } from '../../shared/decorators/roles.decorators';
+import { RoleGuard } from '../../shared/guards/role.guard';
+import { UserMatchGuard } from '../../shared/guards/userMatch.guard';
 
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private userService: UserService) {}
 
   @Get()
-  async getAll() {
-    return await this.userService.getAll();
+  getAll() {
+    return this.userService.getAll();
   }
 
   @Get(':id')
-  async getById(@ParamId() id: number) {
-    return await this.userService.getByid(id);
+  getById(@ParamId() id: number) {
+    return this.userService.getByid(id);
   }
 
+  @Roles(Role.USER)
   @Post()
-  async create(@Body() body: CreateUserDTO) {
-    return await this.userService.create(body);
+  create(@Body() body: CreateUserDTO) {
+    console.log(body);
+    return this.userService.create(body);
   }
 
+  @UseGuards(UserMatchGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Patch(':id')
-  async update(@ParamId() id: number, @Body() body: UpdateUserDTO) {
-    return await this.userService.update(id, body);
+  update(@ParamId() id: number, @Body() body: UpdateUserDTO) {
+    return this.userService.update(id, body);
   }
 
+  @UseGuards(UserMatchGuard)
   @Delete(':id')
-  async delete(@ParamId() id: number) {
-    return await this.userService.delete(id);
+  delete(@ParamId() id: number) {
+    return this.userService.delete(id);
   }
 }
