@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.getByid(id);
   }
 
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() body: CreateUserDTO) {
     console.log(body);
