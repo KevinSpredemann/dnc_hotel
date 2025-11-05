@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from './modules/prisma/prisma.module';
-import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { UserModule } from './modules/users/user.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     ThrottlerModule.forRoot([
       {
         ttl: 5000,
-        limit: 3,
+        limit: 20,
       },
     ]),
     MailerModule.forRoot({

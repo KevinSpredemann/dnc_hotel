@@ -10,6 +10,8 @@ import { UpdateUserDTO } from './domain/dto/uptadeUser.dto';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { UserSelectFields } from '../prisma/utils/userSelectFields';
+import { basename, join, resolve } from 'path';
+import { rm, stat, unlink } from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -50,6 +52,23 @@ export class UserService {
       data: body,
       select: UserSelectFields,
     });
+  }
+  async uploadAvatar(id: number, avatarFilename: string) {
+    const user = await this.isIdExists(id);
+    const directory = resolve(__dirname, '..', '..', '..', 'uploads/avatars');
+
+    if (user.avatar) {
+      const userAvatarFilePath = join(directory, user.avatar);
+      const userAvatarFileExists = await stat(userAvatarFilePath);
+
+      if (userAvatarFileExists) {
+        await unlink(userAvatarFilePath);
+      }
+    }
+
+    const userUpdated = await this.update(id, { avatar: avatarFilename });
+
+    return userUpdated;
   }
 
   async getByEmail(email: string) {

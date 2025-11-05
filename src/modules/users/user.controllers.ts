@@ -1,11 +1,18 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Patch,
   Post,
+  UploadedFile,
+  UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
@@ -17,6 +24,9 @@ import { Roles } from '../../shared/decorators/roles.decorators';
 import { RoleGuard } from '../../shared/guards/role.guard';
 import { UserMatchGuard } from '../../shared/guards/userMatch.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { User } from '../../shared/decorators/user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterExceptionFilter } from '../../shared/filters/multer-exception.filter';
 
 @UseGuards(AuthGuard, RoleGuard, ThrottlerGuard)
 @Controller('users')
@@ -51,5 +61,20 @@ export class UserController {
   @Delete(':id')
   delete(@ParamId() id: number) {
     return this.userService.delete(id);
+  }
+
+  @UseFilters(MulterExceptionFilter)
+  @UseInterceptors(FileInterceptor('avatar'))
+  @Post('avatar')
+  uploadAvatar(
+    @User('id') id: number,
+    @UploadedFile() avatar: Express.Multer.File,
+  ) {
+    if (!avatar) {
+      throw new BadRequestException(
+        'Arquivo inválido. Apenas imagens (png/jpg/gif) são permitidas.',
+      );
+    }
+    return this.userService.uploadAvatar(id, avatar.filename);
   }
 }
