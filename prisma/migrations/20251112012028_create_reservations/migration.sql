@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "reservations" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "total" REAL NOT NULL,
+    "checkIn" DATETIME NOT NULL,
+    "checkOut" DATETIME NOT NULL,
+    "approved" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
