@@ -3,10 +3,7 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
-  ParseFilePipe,
   Patch,
   Post,
   UploadedFile,
@@ -27,6 +24,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { User } from '../../shared/decorators/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterExceptionFilter } from '../../shared/filters/multer-exception.filter';
+import { FileValidationInterceptor } from '../../shared/interceptors/fileValidation.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard, ThrottlerGuard)
 @Controller('users')
@@ -63,8 +61,7 @@ export class UserController {
     return this.userService.delete(id);
   }
 
-  @UseFilters(MulterExceptionFilter)
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
   @Post('avatar')
   uploadAvatar(
     @User('id') id: number,

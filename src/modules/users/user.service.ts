@@ -10,8 +10,8 @@ import { UpdateUserDTO } from './domain/dto/uptadeUser.dto';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { UserSelectFields } from '../prisma/utils/userSelectFields';
-import { basename, join, resolve } from 'path';
-import { rm, stat, unlink } from 'fs/promises';
+import { join, resolve } from 'path';
+import { stat, unlink } from 'fs/promises';
 
 @Injectable()
 export class UserService {

@@ -8,6 +8,9 @@ import {
   Query,
   UseGuards,
   Param,
+  UploadedFile,
+  UseInterceptors,
+  UseFilters,
 } from '@nestjs/common';
 
 import { CreateHotelDto } from '../domain/dto/create-hotel.dto';
@@ -26,6 +29,10 @@ import { Roles } from '../../../shared/decorators/roles.decorators';
 import { Role } from '@prisma/client';
 import { OwnerHotelGuard } from '../../../shared/guards/ownerHotel.guard';
 import { User } from '../../../shared/decorators/user.decorator';
+import { UploadImageHotelService } from '../domain/services/uploadImageHotel.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterExceptionFilter } from '../../../shared/filters/multer-exception.filter';
+import { FileValidationInterceptor } from '../../../shared/interceptors/fileValidation.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -38,6 +45,7 @@ export class HotelsController {
     private readonly deleteHotelService: DeleteHotelService,
     private readonly findByNameHotelService: FindByNameHotelService,
     private readonly findByOwnerHotelService: FindByOwnerHotelService,
+    private readonly uploadHotelService: UploadImageHotelService,
   ) {}
 
   @Roles(Role.ADMIN)
@@ -53,6 +61,15 @@ export class HotelsController {
     @Query('limit') limit: string = '10',
   ) {
     return this.findAllHotelService.execute(Number(page), Number(limit));
+  }
+
+  @UseInterceptors(FileInterceptor('image'), FileValidationInterceptor)
+  @Patch('image/:hotelId')
+  uploadImage(
+    @Param('hotelId') id: string,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.uploadHotelService.execute(id, image.filename);
   }
 
   @Roles(Role.ADMIN, Role.USER)
