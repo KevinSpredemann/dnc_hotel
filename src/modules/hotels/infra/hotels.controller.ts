@@ -31,7 +31,6 @@ import { OwnerHotelGuard } from '../../../shared/guards/ownerHotel.guard';
 import { User } from '../../../shared/decorators/user.decorator';
 import { UploadImageHotelService } from '../domain/services/uploadImageHotel.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MulterExceptionFilter } from '../../../shared/filters/multer-exception.filter';
 import { FileValidationInterceptor } from '../../../shared/interceptors/fileValidation.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard)

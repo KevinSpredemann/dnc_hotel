@@ -6,7 +6,7 @@ import { FindAllHotelService } from './domain/services/findAllHotel.service';
 import { FindOneHotelService } from './domain/services/findOneHotel.service';
 import { DeleteHotelService } from './domain/services/deleteHotel.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { HotelRepositories } from './infra/hotels.repository';
+import { HotelRepository } from './infra/hotels.repository';
 import { REPOSITORY_TOKEN_HOTEL } from './utils/repositoriesTokens';
 import { FindByNameHotelService } from './domain/services/findByNameHotel.service';
 import { FindByOwnerHotelService } from './domain/services/findByOwnerHotel.service';
@@ -51,7 +51,7 @@ import { v4 as uuidv4 } from 'uuid';
 
     {
       provide: REPOSITORY_TOKEN_HOTEL,
-      useClass: HotelRepositories,
+      useClass: HotelRepository,
     },
   ],
 })
