@@ -11,7 +11,7 @@ import {
 export class CreateReservationDto {
   @IsNumber()
   @IsNotEmpty()
-  hotelId: string;
+  hotelId: number;
 
   @IsString()
   @IsNotEmpty()

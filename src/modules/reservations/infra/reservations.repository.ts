@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IReservationRepository } from '../domain/repositories/Ireservations.repository';
-import { Reservation } from '@prisma/client';
+import { Reservation, ReservationStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { IsNumberOptions } from 'class-validator';
 
 @Injectable()
 export class ReservationsRepository implements IReservationRepository {
@@ -20,5 +19,12 @@ export class ReservationsRepository implements IReservationRepository {
 
   findByUserId(userId: number): Promise<Reservation[]> {
     return this.prisma.reservation.findMany({ where: { userId } });
+  }
+
+  updateStatus(id: number, status: ReservationStatus): Promise<Reservation> {
+    return this.prisma.reservation.update({
+      where: { id },
+      data: { status },
+    });
   }
 }

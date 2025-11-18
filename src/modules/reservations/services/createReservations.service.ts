@@ -9,7 +9,7 @@ import type { IReservationRepository } from '../domain/repositories/Ireservation
 import { REPOSITORY_TOKEN_RESERVATION } from '../utils/reservationsTokens';
 import { parseISO, differenceInDays } from 'date-fns';
 import type { IHotelRepository } from '../../hotels/domain/repositories/Ihotel.repository';
-import { Reservation, ReservationStatus } from '@prisma/client';
+import { ReservationStatus } from '@prisma/client';
 import { REPOSITORY_TOKEN_HOTEL } from '../../hotels/utils/repositoriesTokens';
 @Injectable()
 export class CreateReservationsService {
@@ -22,7 +22,7 @@ export class CreateReservationsService {
   async execute(id: number, data: CreateReservationDto) {
     const checkInDate = parseISO(data.checkIn);
     const checkOutDate = parseISO(data.checkOut);
-    const daysOfStay = differenceInDays(checkOutDate, checkInDate);
+    const daysOfStay = differenceInDays(checkInDate, checkOutDate);
 
     if (checkInDate >= checkOutDate) {
       throw new BadRequestException(
@@ -30,9 +30,7 @@ export class CreateReservationsService {
       );
     }
 
-    const hotel = await this.hotelsRepository.findHotelById(
-      Number(data.hotelId),
-    );
+    const hotel = await this.hotelsRepository.findHotelById(data.hotelId);
 
     if (!hotel) {
       throw new NotFoundException('Hotel not found.');
