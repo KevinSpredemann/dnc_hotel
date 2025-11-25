@@ -1,17 +1,19 @@
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../../modules/auth/auth.service';
-import { UserService } from '../../modules/users/user.service';
+import { GetByIdUserService } from '../../modules/users/services/getByIdUser.service';
+import { REPOSITORY_TOKEN_USER } from '../../modules/users/utils/usersTokens';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly getByIdUserService: GetByIdUserService,
   ) {}
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
@@ -26,7 +28,7 @@ export class AuthGuard implements CanActivate {
     const { valid, decoded } = await this.authService.validateToken(token);
     if (!valid) throw new UnauthorizedException('Invalid token');
 
-    const user = await this.userService.getByid(Number(decoded.sub));
+    const user = await this.getByIdUserService.execute(Number(decoded.sub));
 
     if (!user) throw new UnauthorizedException('User not found');
 

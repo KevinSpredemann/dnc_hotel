@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { REPOSITORY_TOKEN_HOTEL } from '../../utils/repositoriesTokens';
 import type { IHotelRepository } from '../repositories/Ihotel.repository';
+import { REPOSITORY_TOKEN_HOTEL } from '../../utils/repositoriesTokens';
 
 @Injectable()
 export class FindOneHotelService {
@@ -9,6 +9,7 @@ export class FindOneHotelService {
     private readonly hotelRepositories: IHotelRepository,
   ) {}
   async execute(id: number) {
-    return await this.hotelRepositories.findHotelById(id);
+    const hotel = await this.hotelRepositories.findHotelById(id);
+    return hotel;
   }
 }

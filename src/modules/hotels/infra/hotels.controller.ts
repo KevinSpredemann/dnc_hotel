@@ -10,7 +10,9 @@ import {
   Param,
   UploadedFile,
   UseInterceptors,
-  UseFilters,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
 } from '@nestjs/common';
 
 import { CreateHotelDto } from '../domain/dto/create-hotel.dto';
@@ -32,7 +34,7 @@ import { User } from '../../../shared/decorators/user.decorator';
 import { UploadImageHotelService } from '../domain/services/uploadImageHotel.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationInterceptor } from '../../../shared/interceptors/fileValidation.interceptor';
-
+import { ValidateFilePipe } from '../../../shared/pipes/validate-file.pipe';
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
 export class HotelsController {
@@ -62,13 +64,10 @@ export class HotelsController {
     return this.findAllHotelService.execute(Number(page), Number(limit));
   }
 
-  @UseInterceptors(FileInterceptor('image'), FileValidationInterceptor)
-  @Patch('image/:hotelId')
-  uploadImage(
-    @Param('hotelId') id: string,
-    @UploadedFile() image: Express.Multer.File,
-  ) {
-    return this.uploadHotelService.execute(id, image.filename);
+  @Roles(Role.ADMIN, Role.USER)
+  @Get(':id')
+  findOne(@ParamId() id: number) {
+    return this.findOneHotelService.execute(id);
   }
 
   @Roles(Role.ADMIN, Role.USER)
@@ -83,10 +82,19 @@ export class HotelsController {
     return this.findByOwnerHotelService.execute(id);
   }
 
-  @Roles(Role.ADMIN, Role.USER)
-  @Get(':id')
-  findOne(@ParamId() id: number) {
-    return this.findOneHotelService.execute(id);
+  @UseInterceptors(FileInterceptor('image'), FileValidationInterceptor)
+  @Patch('image/:hotelId')
+  uploadImage(
+    @Param('hotelId') id: string,
+    @UploadedFile(
+      new ValidateFilePipe(
+        ['image/webp', 'image/png', 'image/jpeg', 'image/gif'],
+        9 * 1024 * 1024,
+      ),
+    )
+    image: Express.Multer.File,
+  ) {
+    return this.uploadHotelService.execute(id, image.filename);
   }
 
   @UseGuards(OwnerHotelGuard)

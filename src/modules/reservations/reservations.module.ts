@@ -3,7 +3,7 @@ import { CreateReservationsService } from './services/createReservations.service
 import { ReservationsController } from './infra/reservations.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
-import { UserModule } from '../users/user.module';
+import { UserModule } from '../users/users.module';
 import { HotelsModule } from '../hotels/hotels.module';
 import { ReservationsRepository } from './infra/reservations.repository';
 import { REPOSITORY_TOKEN_RESERVATION } from './utils/reservationsTokens';
@@ -13,6 +13,8 @@ import { FindByIdReservationssService } from './services/findByIdReservations.se
 import { FindByUserIdReservationssService } from './services/findByUserIdReservations.service';
 import { FindAllReservationssService } from './services/findAllReservations.service';
 import { UpdateStatusReservationService } from './services/updateStatusReservationService.service';
+import { REPOSITORY_TOKEN_USER } from '../users/utils/usersTokens';
+import { UserRepository } from '../users/infra/users.repository';
 
 @Module({
   imports: [PrismaModule, AuthModule, UserModule, HotelsModule],
@@ -31,6 +33,10 @@ import { UpdateStatusReservationService } from './services/updateStatusReservati
       provide: REPOSITORY_TOKEN_HOTEL,
       useClass: HotelRepository,
     },
+    {
+      provide: REPOSITORY_TOKEN_USER,
+      useClass: UserRepository,
+    }
   ],
 })
 export class ReservationsModule {}

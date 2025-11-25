@@ -23,7 +23,7 @@ export class ReservationsController {
     private readonly updateStatusReservationService: UpdateStatusReservationService,
   ) {}
 
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN)
   @Post()
   create(@User('id') id: number, @Body() body: CreateReservationDto) {
     return this.createReservationsService.execute(id, body);

@@ -1,8 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '../users/user.service';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
@@ -10,12 +9,17 @@ import { ValidateTokenDTO } from './domain/dto/validateToken.dto';
 import { AuthLoginDTO } from './domain/dto/authLogin.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { templateHTML } from './utils/templateHTML';
+import { GetByEmailUserService } from '../users/services/getByEmailUser.service';
+import { CreateUserService } from '../users/services/createUser.service';
+import { UpdateUserService } from '../users/services/updateUser.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    private readonly getByEmailUserService: GetByEmailUserService,
+    private readonly createUserService: CreateUserService,
+    private readonly updateUserService: UpdateUserService,
     private readonly mailerService: MailerService,
   ) {}
 
@@ -30,7 +34,7 @@ export class AuthService {
   }
 
   async login({ email, password }: AuthLoginDTO) {
-    const user = await this.userService.getByEmail(email);
+    const user = await this.getByEmailUserService.execute(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Email or password is incorrect');
     }
@@ -44,7 +48,7 @@ export class AuthService {
       password: body.password,
       role: body.role ?? Role.USER,
     };
-    const user = await this.userService.create(newUser);
+    const user = await this.createUserService.execute(newUser);
     return await this.generateToken(user);
   }
 
@@ -53,14 +57,17 @@ export class AuthService {
     if (!valid || !decoded) {
       throw new UnauthorizedException('Invalid token');
     }
-    const user: User = await this.userService.update(Number(decoded.sub), {
-      password,
-    });
+    const user: User = await this.updateUserService.execute(
+      Number(decoded.sub),
+      {
+        password,
+      },
+    );
     return await this.generateToken(user);
   }
 
   async forgot(email: string) {
-    const user = await this.userService.getByEmail(email);
+    const user = await this.getByEmailUserService.execute(email);
     if (!user) {
       throw new UnauthorizedException('Email not found');
     }
