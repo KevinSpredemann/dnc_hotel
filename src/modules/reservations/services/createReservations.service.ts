@@ -13,7 +13,6 @@ import { ReservationStatus } from '@prisma/client';
 import { REPOSITORY_TOKEN_HOTEL } from '../../hotels/utils/repositoriesTokens';
 import { MailerService } from '@nestjs-modules/mailer';
 import { GetByIdUserService } from '../../users/services/getByIdUser.service';
-import { REPOSITORY_TOKEN_USER } from '../../users/utils/usersTokens';
 @Injectable()
 export class CreateReservationsService {
   constructor(
