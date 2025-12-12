@@ -25,7 +25,6 @@ export class UploadImageHotelService {
 
     if (hotel.image) {
       const imageHotelFilePath = join(directory, hotel.image);
-
       try {
         await stat(imageHotelFilePath);
         await unlink(imageHotelFilePath);

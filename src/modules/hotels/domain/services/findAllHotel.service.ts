@@ -23,7 +23,7 @@ export class FindAllHotelService {
       data = await this.hotelRepositories.findHotels(offSet, limit);
       data = data.map((hotel: Hotel) => {
         if (hotel.image) {
-          hotel.image = `${process.env.DATABASE_URL}/uploads/${hotel.image}`;
+          hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${hotel.image}`;
         }
         return hotel;
       });

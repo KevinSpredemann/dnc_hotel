@@ -13,12 +13,12 @@ const hotelMock: Hotel = {
   id: 1,
   name: 'Hotel Test',
   description: 'A Test Hotel description',
-  image: 'http://image.url/hotel.jpg',
+  image: 'test-image.jpg',
   price: 100,
   address: '123 Test St, Test City',
   ownerId: 1,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date('2024-07-28T10:41:18.753Z'),
+  updatedAt: new Date('2024-07-28T10:41:18.753Z'),
 };
 
 describe('FindAllHotelService', () => {
@@ -81,5 +81,37 @@ describe('FindAllHotelService', () => {
     );
     expect(result.data).toEqual([hotelMock]);
     expect(result.total).toEqual(1);
+    expect(result).toEqual({
+      total: 1,
+      page: 1,
+      per_page: 10,
+      data: [hotelMock],
+    });
+  });
+
+  it('should return the correct pagination matadata', async () => {
+    redis.get.mockResolvedValue(null);
+
+    const page = 4;
+    const limit = 5;
+    const result = await service.execute(page, limit);
+
+    expect(hotelRepository.findHotels).toHaveBeenCalledWith(15, 5);
+    expect(result.page).toEqual(page);
+    expect(result.per_page).toEqual(limit);
+  });
+
+  it('should format hotels images URLs correctly', async () => {
+    const hotelWithImage = { ...hotelMock, image: 'test-image.jpg' };
+    redis.get.mockResolvedValue(null);
+    (hotelRepository.findHotels as jest.Mock).mockResolvedValue([
+      hotelWithImage,
+    ]);
+
+    const result = await service.execute();
+
+    expect(result.data[0].image).toEqual(
+      `${process.env.APP_API_URL}/uploads-hotel/test-image.jpg`,
+    );
   });
 });

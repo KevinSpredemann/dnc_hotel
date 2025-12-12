@@ -5,22 +5,22 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { UserController } from './infra/users.controller.js';
-import { PrismaModule } from '../prisma/prisma.module.js';
-import { UserIdCheckMiddleware } from '../../shared/middlewares/userIdCheck.middleware.js';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { AuthModule } from '../auth/auth.module.js';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateUserService } from './services/createUser.service.js';
-import { DeleteUserService } from './services/deleteUser.service.js';
-import { UpdateUserService } from './services/updateUser.service.js';
-import { UpdateAvatarUserService } from './services/updateAvatarUser.service.js';
-import { GetByEmailUserService } from './services/getByEmailUser.service.js';
-import { GetByIdUserService } from './services/getByIdUser.service.js';
-import { GetAllUserService } from './services/getAllUsers.service.js';
-import { REPOSITORY_TOKEN_USER } from './utils/usersTokens.js';
-import { UserRepository } from './infra/users.repository.js';
+import { PrismaModule } from '../prisma/prisma.module';
+import { UserIdCheckMiddleware } from '../../shared/middlewares/userIdCheck.middleware';
+import { AuthModule } from '../auth/auth.module';
+import { CreateUserService } from './services/createUser.service';
+import { DeleteUserService } from './services/deleteUser.service';
+import { UpdateUserService } from './services/updateUser.service';
+import { UpdateAvatarUserService } from './services/updateAvatarUser.service';
+import { GetByEmailUserService } from './services/getByEmailUser.service';
+import { GetAllUserService } from './services/getAllUsers.service';
+import { GetByIdUserService } from './services/getByIdUser.service';
+import { REPOSITORY_TOKEN_USER } from './utils/usersTokens';
+import { UserRepository } from './infra/users.repository';
+import { UserController } from './infra/users.controller';
 
 @Module({
   imports: [
