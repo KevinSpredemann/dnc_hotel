@@ -17,12 +17,25 @@ export class HotelRepository implements IHotelRepository {
       where: { name: { contains: name } },
     });
   }
-  findHotelById(id: number): Promise<Hotel | null> {
-    return this.prisma.hotel.findUnique({
-      where: { id: Number(id) },
-      include: { owner: true },
+  async findHotelById(id: number): Promise<Hotel | null> {
+    const hotel = await this.prisma.hotel.findUnique({
+      where: { id },
+      include: {
+        owner: true,
+      },
     });
+
+    if (hotel?.owner?.avatar) {
+      hotel.owner.avatar = `${process.env.APP_API_URL}/uploads/${hotel.owner.avatar}`;
+    }
+
+    if (hotel?.image) {
+      hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${hotel.image}`;
+    }
+
+    return hotel;
   }
+
   async findHotels(offSet: number, limit: number): Promise<Hotel[]> {
     return this.prisma.hotel.findMany({
       skip: offSet,

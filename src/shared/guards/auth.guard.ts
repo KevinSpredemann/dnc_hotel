@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../../modules/auth/auth.service';
 import { GetByIdUserService } from '../../modules/users/services/getByIdUser.service';
-import { REPOSITORY_TOKEN_USER } from '../../modules/users/utils/usersTokens';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

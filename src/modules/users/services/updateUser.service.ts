@@ -7,8 +7,12 @@ Injectable();
 export class UpdateUserService {
   constructor(
     @Inject(REPOSITORY_TOKEN_USER)
-    private readonly userRepositories: IUserRepository) {}
-  async execute(id: number, UpdateUserDTO: UpdateUserDTO) {
-    return await this.userRepositories.updateUser(id, UpdateUserDTO);
+    private readonly userRepositories: IUserRepository,
+  ) {}
+  async execute(id: number, data: UpdateUserDTO) {
+    if (data.password) {
+      data.password = await this.userRepositories.hashPassword(data.password);
+    }
+    return await this.userRepositories.updateUser(id, data);
   }
 }

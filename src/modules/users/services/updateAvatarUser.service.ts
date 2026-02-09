@@ -8,25 +8,25 @@ import { REPOSITORY_TOKEN_USER } from '../utils/usersTokens';
 export class UpdateAvatarUserService {
   constructor(
     @Inject(REPOSITORY_TOKEN_USER)
-    private readonly userRepositories: IUserRepository) {}
+    private readonly userRepositories: IUserRepository,
+  ) {}
   async execute(id: number, avatarFilename: string) {
     const user = await this.userRepositories.getByIdUser(id);
-    const directory = resolve(__dirname, '..', '..', '..', 'uploads');
+    const directory = join(process.cwd(), 'uploads');
 
     if (user.avatar) {
       const userAvatarFilePath = join(directory, user.avatar);
-      const userAvatarFileExists = await stat(userAvatarFilePath);
 
-      if (userAvatarFileExists) {
+      try {
+        await stat(userAvatarFilePath);
         await unlink(userAvatarFilePath);
+      } catch (err: any) {
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
       }
     }
 
-    const userUpdated = await this.userRepositories.uploadAvatar(
-      id,
-      avatarFilename,
-    );
-
-    return userUpdated;
+    return await this.userRepositories.uploadAvatar(id, avatarFilename);
   }
 }

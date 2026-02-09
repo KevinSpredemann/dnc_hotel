@@ -30,7 +30,7 @@ import { GetByEmailUserService } from '../services/getByEmailUser.service';
 import { UpdateAvatarUserService } from '../services/updateAvatarUser.service';
 import { DeleteUserService } from '../services/deleteUser.service';
 
-@UseGuards(AuthGuard, RoleGuard, ThrottlerGuard)
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
 export class UserController {
   constructor(

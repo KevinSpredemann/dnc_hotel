@@ -6,6 +6,9 @@ import Redis from 'ioredis';
 import { REDIS_HOTEL_KEY } from '../../utils/redisKey';
 import { Hotel } from '@prisma/client';
 
+const getRedisKey = (page: number, limit: number) => {
+  return `${REDIS_HOTEL_KEY}-page-${page}-limit=${limit}`;
+};
 @Injectable()
 export class FindAllHotelService {
   constructor(
@@ -16,7 +19,8 @@ export class FindAllHotelService {
   async execute(page: number = 1, limit: number = 10) {
     const offSet = (page - 1) * limit;
 
-    const dataRedis = await this.redis.get(REDIS_HOTEL_KEY);
+    const redisKey = getRedisKey(page, limit);
+    const dataRedis = await this.redis.get(redisKey);
     let data = JSON.parse(dataRedis);
 
     if (!data) {

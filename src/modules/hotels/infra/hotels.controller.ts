@@ -49,7 +49,7 @@ export class HotelsController {
     private readonly uploadHotelService: UploadImageHotelService,
   ) {}
 
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   @Post()
   create(@User('id') id: number, @Body() createHotelDto: CreateHotelDto) {
     return this.createHotelService.execute(createHotelDto, id);
@@ -65,6 +65,12 @@ export class HotelsController {
   }
 
   @Roles(Role.ADMIN, Role.USER)
+  @Get('owner')
+  findByOwner(@User('id') id: number) {
+    return this.findByOwnerHotelService.execute(id);
+  }
+
+  @Roles(Role.ADMIN, Role.USER)
   @Get(':id')
   findOne(@ParamId() id: number) {
     return this.findOneHotelService.execute(id);
@@ -74,12 +80,6 @@ export class HotelsController {
   @Get('name')
   findByName(@Query('name') name: string) {
     return this.findByNameHotelService.execute(name);
-  }
-
-  @Roles(Role.ADMIN)
-  @Get('owner')
-  findByOwner(@User('id') id: number) {
-    return this.findByOwnerHotelService.execute(id);
   }
 
   @UseInterceptors(FileInterceptor('image'), FileValidationInterceptor)

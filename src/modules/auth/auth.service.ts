@@ -90,7 +90,11 @@ export class AuthService {
       });
       return { valid: true, decoded };
     } catch (error) {
-      return { valid: false, message: error.message };
+      if (error instanceof Error) {
+        return { valid: false, message: error.message };
+      }
+
+      return { valid: false, message: 'Erro desconhecido' };
     }
   }
 }

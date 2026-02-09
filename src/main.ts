@@ -2,16 +2,24 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { MulterExceptionFilter } from './shared/filters/multer-exception.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new MulterExceptionFilter());
   app.enableCors({
     origin: 'http://localhost:3001',
     methods: 'GET,PATCH,POST,DELETE,',
   });
-  //app.useGlobalInterceptors(new LoggingInterceptor());
-  await app.listen(process.env.PORT ?? 3000);
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads',
+  });
+
+  app.useStaticAssets(join(process.cwd(), 'uploads-hotel'), {
+    prefix: '/uploads-hotel',
+  });
+  await app.listen(process.env.PORT ?? 3003);
 }
 bootstrap();

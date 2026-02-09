@@ -17,8 +17,8 @@ import { UserModule } from './modules/users/users.module';
     AuthModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 5000,
-        limit: 20,
+        ttl: 60,
+        limit: 100,
       },
     ]),
     MailerModule.forRoot({

@@ -21,6 +21,7 @@ import { GetByIdUserService } from './services/getByIdUser.service';
 import { REPOSITORY_TOKEN_USER } from './utils/usersTokens';
 import { UserRepository } from './infra/users.repository';
 import { UserController } from './infra/users.controller';
+import { extname } from 'path';
 
 @Module({
   imports: [
@@ -30,8 +31,9 @@ import { UserController } from './infra/users.controller';
       storage: diskStorage({
         destination: './uploads',
         filename: (_req, file, cb) => {
-          const filename = `${uuidv4()}${file.originalname}`;
-          return cb(null, filename);
+          const fileExt = extname(file.originalname);
+          const filename = `${uuidv4()}${fileExt}`;
+          cb(null, filename);
         },
       }),
     }),

@@ -29,9 +29,16 @@ export class UploadImageHotelService {
         await stat(imageHotelFilePath);
         await unlink(imageHotelFilePath);
       } catch (err) {
-        if (err.code !== 'ENOENT') {
-          throw err;
+        if (
+          typeof err === 'object' &&
+          err !== null &&
+          'code' in err &&
+          err.code === 'ENOENT'
+        ) {
+          return;
         }
+
+        throw err;
       }
     }
     await this.redis.del(REDIS_HOTEL_KEY);

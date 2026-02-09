@@ -9,8 +9,15 @@ export class ReservationsRepository implements IReservationRepository {
   create(data: any): Promise<Reservation> {
     return this.prisma.reservation.create({ data });
   }
-  findById(id: number): Promise<Reservation> {
-    return this.prisma.reservation.findUnique({ where: { id } });
+  async findById(id: number): Promise<Reservation> {
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+      include: { user: true },
+    });
+    if (reservation.user.avatar) {
+      reservation.user.avatar = `${process.env.APP_API_URL}/uploads/${reservation.user.avatar}`;
+    }
+    return reservation;
   }
 
   findAll(): Promise<Reservation[]> {
@@ -18,7 +25,10 @@ export class ReservationsRepository implements IReservationRepository {
   }
 
   findByUserId(userId: number): Promise<Reservation[]> {
-    return this.prisma.reservation.findMany({ where: { userId } });
+    return this.prisma.reservation.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   updateStatus(id: number, status: ReservationStatus): Promise<Reservation> {
