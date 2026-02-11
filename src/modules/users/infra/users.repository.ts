@@ -18,10 +18,15 @@ export class UserRepository implements IUserRepository {
   }
   async getByIdUser(id: number): Promise<User | null> {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    if (user.avatar) {
-      user.avatar = `${process.env.APP_API_URL}/uploads/${user.avatar}`;
-    }
-    return user;
+
+    if (!user) return null;
+
+    return {
+      ...user,
+      avatar: user.avatar
+        ? `${process.env.APP_API_URL}/uploads/${user.avatar}`
+        : null,
+    };
   }
   getByEmailUser(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
