@@ -31,7 +31,7 @@ export class FindAllHotelService {
         }
         return hotel;
       });
-      await this.redis.set(REDIS_HOTEL_KEY, JSON.stringify(data));
+      await this.redis.set(redisKey, JSON.stringify(data));
     }
 
     const total = await this.hotelRepositories.countHotels();

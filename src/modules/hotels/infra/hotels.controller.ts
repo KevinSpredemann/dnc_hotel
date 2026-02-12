@@ -65,6 +65,11 @@ export class HotelsController {
   }
 
   @Roles(Role.ADMIN, Role.USER)
+  @Get('name')
+  findByName(@Query('name') name: string) {
+    return this.findByNameHotelService.execute(name);
+  }
+  @Roles(Role.ADMIN, Role.USER)
   @Get('owner')
   findByOwner(@User('id') id: number) {
     return this.findByOwnerHotelService.execute(id);
@@ -74,12 +79,6 @@ export class HotelsController {
   @Get(':id')
   findOne(@ParamId() id: number) {
     return this.findOneHotelService.execute(id);
-  }
-
-  @Roles(Role.ADMIN, Role.USER)
-  @Get('name')
-  findByName(@Query('name') name: string) {
-    return this.findByNameHotelService.execute(name);
   }
 
   @UseInterceptors(FileInterceptor('image'), FileValidationInterceptor)
@@ -105,7 +104,7 @@ export class HotelsController {
   }
 
   @UseGuards(OwnerHotelGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   @Delete(':id')
   delete(@ParamId() id: number) {
     return this.deleteHotelService.execute(id);

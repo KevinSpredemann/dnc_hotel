@@ -28,11 +28,6 @@ export class HotelRepository implements IHotelRepository {
     if (hotel?.owner?.avatar) {
       hotel.owner.avatar = `${process.env.APP_API_URL}/uploads/${hotel.owner.avatar}`;
     }
-
-    if (hotel?.image) {
-      hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${hotel.image}`;
-    }
-
     return hotel;
   }
 

@@ -10,6 +10,9 @@ export class FindOneHotelService {
   ) {}
   async execute(id: number) {
     const hotel = await this.hotelRepositories.findHotelById(id);
+    if (hotel && hotel.image) {
+      hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${hotel.image}`;
+    }
     return hotel;
   }
 }
