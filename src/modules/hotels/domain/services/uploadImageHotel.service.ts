@@ -41,7 +41,11 @@ export class UploadImageHotelService {
         throw err;
       }
     }
-    await this.redis.del(REDIS_HOTEL_KEY);
+    const keys = await this.redis.keys(`${REDIS_HOTEL_KEY}*`);
+
+    if (keys.length) {
+      await this.redis.del(...keys);
+    }
 
     return await this.hotelRepositories.updateHotel(Number(id), {
       image: imageFileName,

@@ -15,6 +15,7 @@ import { FindAllReservationssService } from './services/findAllReservations.serv
 import { UpdateStatusReservationService } from './services/updateStatusReservationService.service';
 import { REPOSITORY_TOKEN_USER } from '../users/utils/usersTokens';
 import { UserRepository } from '../users/infra/users.repository';
+import { FindByHotelIdReservationssService } from './services/FindByHotelIdReservationssService.services';
 
 @Module({
   imports: [PrismaModule, AuthModule, UserModule, HotelsModule],
@@ -25,6 +26,7 @@ import { UserRepository } from '../users/infra/users.repository';
     FindByUserIdReservationssService,
     FindAllReservationssService,
     UpdateStatusReservationService,
+    FindByHotelIdReservationssService,
     {
       provide: REPOSITORY_TOKEN_RESERVATION,
       useClass: ReservationsRepository,
@@ -36,7 +38,7 @@ import { UserRepository } from '../users/infra/users.repository';
     {
       provide: REPOSITORY_TOKEN_USER,
       useClass: UserRepository,
-    }
+    },
   ],
 })
 export class ReservationsModule {}

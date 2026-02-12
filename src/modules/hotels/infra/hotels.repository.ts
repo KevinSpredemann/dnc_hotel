@@ -28,6 +28,7 @@ export class HotelRepository implements IHotelRepository {
     if (hotel?.owner?.avatar) {
       hotel.owner.avatar = `${process.env.APP_API_URL}/uploads/${hotel.owner.avatar}`;
     }
+
     return hotel;
   }
 

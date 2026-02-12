@@ -12,11 +12,24 @@ export class ReservationsRepository implements IReservationRepository {
   async findById(id: number): Promise<Reservation> {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
-      include: { user: true },
+      include: {
+        user: true,
+        hotel: true, // 🔥 importante
+      },
     });
-    if (reservation.user.avatar) {
+
+    if (!reservation) {
+      return null;
+    }
+
+    if (reservation.user?.avatar) {
       reservation.user.avatar = `${process.env.APP_API_URL}/uploads/${reservation.user.avatar}`;
     }
+
+    if (reservation.hotel?.image) {
+      reservation.hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${reservation.hotel.image}`;
+    }
+
     return reservation;
   }
 
@@ -28,6 +41,13 @@ export class ReservationsRepository implements IReservationRepository {
     return this.prisma.reservation.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  findByHotelId(hotelId: number): Promise<Reservation[]> {
+    return this.prisma.reservation.findMany({
+      where: { hotelId },
+      include: { user: true },
     });
   }
 
