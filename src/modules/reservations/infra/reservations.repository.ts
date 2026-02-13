@@ -14,7 +14,7 @@ export class ReservationsRepository implements IReservationRepository {
       where: { id },
       include: {
         user: true,
-        hotel: true, // 🔥 importante
+        hotel: true,
       },
     });
 
