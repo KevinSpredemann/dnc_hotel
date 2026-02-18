@@ -10,8 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new MulterExceptionFilter());
   app.enableCors({
-    origin: 'http://localhost:3001',
-    methods: 'GET,PATCH,POST,DELETE,',
+    origin: true,
   });
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
     prefix: '/uploads',
@@ -20,6 +19,6 @@ async function bootstrap() {
   app.useStaticAssets(join(process.cwd(), 'uploads-hotel'), {
     prefix: '/uploads-hotel',
   });
-  await app.listen(process.env.PORT ?? 3003);
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();
