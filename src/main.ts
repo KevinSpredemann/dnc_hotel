@@ -19,6 +19,7 @@ async function bootstrap() {
   app.useStaticAssets(join(process.cwd(), 'uploads-hotel'), {
     prefix: '/uploads-hotel',
   });
+  console.log('PORTA USADA:', process.env.PORT);
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();
