@@ -30,6 +30,7 @@ import { GetByEmailUserService } from '../services/getByEmailUser.service';
 import { UpdateAvatarUserService } from '../services/updateAvatarUser.service';
 import { DeleteUserService } from '../services/deleteUser.service';
 import { storageUsers } from '../users.module';
+import { ValidateFilePipe } from '../../../shared/pipes/validate-file.pipe';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
@@ -79,11 +80,17 @@ export class UserController {
     return this.deleteUserService.execute(id);
   }
 
-  @UseInterceptors(FileInterceptor('avatar', { storage: storageUsers }))
+  @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
   @Post('avatar')
   uploadAvatar(
     @User('id') id: number,
-    @UploadedFile() avatar: Express.Multer.File,
+    @UploadedFile(
+      new ValidateFilePipe(
+        ['image/webp', 'image/png', 'image/jpeg', 'image/gif'],
+        9 * 1024 * 1024,
+      ),
+    )
+    avatar: Express.Multer.File,
   ) {
     if (!avatar) {
       throw new BadRequestException(
@@ -91,6 +98,6 @@ export class UserController {
       );
     }
 
-    return this.uploadAvatarUserService.execute(id, avatar);
+    return this.uploadAvatarUserService.execute(id, avatar.path);
   }
 }
