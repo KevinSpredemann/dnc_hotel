@@ -25,7 +25,7 @@ import { extname } from 'path';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../../config/cloudinary';
 
-const storageUsers = new CloudinaryStorage({
+export const storageUsers = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => ({
     folder: 'users',

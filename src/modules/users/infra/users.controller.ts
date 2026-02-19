@@ -29,6 +29,7 @@ import { GetByIdUserService } from '../services/getByIdUser.service';
 import { GetByEmailUserService } from '../services/getByEmailUser.service';
 import { UpdateAvatarUserService } from '../services/updateAvatarUser.service';
 import { DeleteUserService } from '../services/deleteUser.service';
+import { storageUsers } from '../users.module';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
@@ -78,7 +79,7 @@ export class UserController {
     return this.deleteUserService.execute(id);
   }
 
-  @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
+  @UseInterceptors(FileInterceptor('avatar', { storage: storageUsers }))
   @Post('avatar')
   uploadAvatar(
     @User('id') id: number,
