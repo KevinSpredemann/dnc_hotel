@@ -89,6 +89,7 @@ export class UserController {
         'Arquivo inválido. Apenas imagens (png/jpg/gif) são permitidas.',
       );
     }
-    return this.upaloadAvatarUserService.execute(id, avatar.filename);
+
+    return this.upaloadAvatarUserService.execute(id, avatar.path);
   }
 }

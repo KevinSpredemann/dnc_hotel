@@ -93,7 +93,7 @@ export class HotelsController {
     )
     image: Express.Multer.File,
   ) {
-    return this.uploadHotelService.execute(id, image.filename);
+    return this.uploadHotelService.execute(id, image.path);
   }
 
   @UseGuards(OwnerHotelGuard)

@@ -17,19 +17,6 @@ export class ReservationsRepository implements IReservationRepository {
         hotel: true,
       },
     });
-
-    if (!reservation) {
-      return null;
-    }
-
-    if (reservation.user?.avatar) {
-      reservation.user.avatar = `${process.env.APP_API_URL}/uploads/${reservation.user.avatar}`;
-    }
-
-    if (reservation.hotel?.image) {
-      reservation.hotel.image = `${process.env.APP_API_URL}/uploads-hotel/${reservation.hotel.image}`;
-    }
-
     return reservation;
   }
 

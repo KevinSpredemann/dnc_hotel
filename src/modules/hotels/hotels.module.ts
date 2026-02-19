@@ -13,10 +13,17 @@ import { FindByOwnerHotelService } from './domain/services/findByOwnerHotel.serv
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { UploadImageHotelService } from './domain/services/uploadImageHotel.service';
-import { v4 as uuidv4 } from 'uuid';
-import { join } from 'path';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../../config/cloudinary';
+
+export const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => ({
+    folder: 'hotels',
+    resource_type: 'image',
+  }),
+});
 
 @Module({
   imports: [
@@ -24,15 +31,7 @@ import { join } from 'path';
     AuthModule,
     UserModule,
     MulterModule.register({
-      storage: diskStorage({
-        destination: (_req, _file, cb) => {
-          cb(null, join(process.cwd(), 'uploads-hotel'));
-        },
-        filename: (_req, file, cb) => {
-          const fileName = `${uuidv4()}-${file.originalname}`;
-          cb(null, fileName);
-        },
-      }),
+      storage,
     }),
   ],
   controllers: [HotelsController],

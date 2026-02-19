@@ -11,5 +11,4 @@ export interface IUserRepository {
   deleteUser(id: number): Promise<User>;
   hashPassword(password: string): Promise<string>;
   uploadAvatar(id: number, avatarFilename: string): Promise<User>;
-  getAvatarUrl(user: User): Promise<string | null>;
 }

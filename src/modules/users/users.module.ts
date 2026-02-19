@@ -22,20 +22,22 @@ import { REPOSITORY_TOKEN_USER } from './utils/usersTokens';
 import { UserRepository } from './infra/users.repository';
 import { UserController } from './infra/users.controller';
 import { extname } from 'path';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../../config/cloudinary';
 
+const storageUsers = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => ({
+    folder: 'users',
+    resource_type: 'image',
+  }),
+});
 @Module({
   imports: [
     PrismaModule,
     forwardRef(() => AuthModule),
     MulterModule.register({
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (_req, file, cb) => {
-          const fileExt = extname(file.originalname);
-          const filename = `${uuidv4()}${fileExt}`;
-          cb(null, filename);
-        },
-      }),
+      storage: storageUsers,
     }),
   ],
   controllers: [UserController],

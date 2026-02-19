@@ -4,11 +4,12 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { HotelsModule } from './modules/hotels/hotels.module';
+import { HotelsModule, storage } from './modules/hotels/hotels.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UserModule } from './modules/users/users.module';
+import { MulterModule } from '@nestjs/platform-express/multer';
 
 @Module({
   imports: [
@@ -33,9 +34,8 @@ import { UserModule } from './modules/users/users.module';
       type: 'single',
       url: `${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'uploads-hotel'),
-      serveRoot: '/uploads-hotel',
+    MulterModule.register({
+      storage,
     }),
   ],
   providers: [

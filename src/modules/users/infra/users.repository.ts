@@ -5,7 +5,6 @@ import { CreateUserDTO } from '../domain/dto/createUser.dto';
 import { User } from '@prisma/client';
 import { UpdateUserDTO } from '../domain/dto/uptadeUser.dto';
 import * as bcrypt from 'bcrypt';
-import { UserSelectFields } from '../../prisma/utils/userSelectFields';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -17,16 +16,7 @@ export class UserRepository implements IUserRepository {
     return this.prisma.user.findMany();
   }
   async getByIdUser(id: number): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-
-    if (!user) return null;
-
-    return {
-      ...user,
-      avatar: user.avatar
-        ? `${process.env.APP_API_URL}/uploads/${user.avatar}`
-        : null,
-    };
+    return await this.prisma.user.findUnique({ where: { id } });
   }
   getByEmailUser(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
@@ -45,12 +35,6 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async getAvatarUrl(user: User): Promise<string | null> {
-    if (!user || !user.avatar) {
-      return null;
-    }
-    return `${process.env.APP_API_URL}/uploads/${user.avatar}`;
-  }
   async hashPassword(password: string) {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
