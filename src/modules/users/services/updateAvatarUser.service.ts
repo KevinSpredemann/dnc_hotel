@@ -13,14 +13,15 @@ export class UpdateAvatarUserService {
 
   async execute(id: number, file: Express.Multer.File) {
     const user = await this.userRepositories.getByIdUser(id);
+
     if (!user) throw new NotFoundException('User not found');
 
     if (user.avatar) {
       try {
         const publicId = this.extractPublicId(user.avatar);
         await cloudinary.uploader.destroy(publicId);
-      } catch (error) {
-        console.log('Erro ao remover avatar antigo:', error);
+      } catch (err) {
+        console.log('Erro ao remover avatar antigo:', err);
       }
     }
 
@@ -28,7 +29,6 @@ export class UpdateAvatarUserService {
       folder: 'users',
       resource_type: 'image',
     });
-
     await fs.unlink(file.path);
 
     return this.userRepositories.uploadAvatar(id, uploaded.secure_url);

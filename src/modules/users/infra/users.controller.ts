@@ -90,6 +90,6 @@ export class UserController {
       );
     }
 
-    return this.upaloadAvatarUserService.execute(id, avatar.path);
+    return this.upaloadAvatarUserService.execute(id, avatar);
   }
 }
