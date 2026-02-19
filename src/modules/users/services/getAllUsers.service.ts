@@ -9,13 +9,8 @@ export class GetAllUserService {
     @Inject(REPOSITORY_TOKEN_USER)
     private readonly userRepositories: IUserRepository,
   ) {}
+
   async execute() {
-    const users = await this.userRepositories.getAllUsers();
-    return Promise.all(
-      users.map(async (user) => ({
-        ...user,
-        avatar: await this.userRepositories.getAvatarUrl(user),
-      })),
-    );
+    return await this.userRepositories.getAllUsers();
   }
 }
