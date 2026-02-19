@@ -11,7 +11,7 @@ export class UpdateAvatarUserService {
     private readonly userRepositories: IUserRepository,
   ) {}
 
-  async execute(id: number, avatarUrl: string) {
+  async execute(id: number, file: Express.Multer.File) {
     const user = await this.userRepositories.getByIdUser(id);
 
     if (!user) {
@@ -27,7 +27,14 @@ export class UpdateAvatarUserService {
       }
     }
 
-    return this.userRepositories.uploadAvatar(id, avatarUrl);
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: 'users',
+      resource_type: 'image',
+    });
+
+    await unlink(file.path);
+
+    return this.userRepositories.uploadAvatar(id, result.secure_url);
   }
 
   private extractPublicId(url: string): string {
