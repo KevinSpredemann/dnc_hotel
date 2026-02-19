@@ -38,7 +38,7 @@ export class UserController {
     private updateUserService: UpdateUserService,
     private getAllUserService: GetAllUserService,
     private getByEmailUserService: GetByEmailUserService,
-    private upaloadAvatarUserService: UpdateAvatarUserService,
+    private uploadAvatarUserService: UpdateAvatarUserService,
     private getByIdUserService: GetByIdUserService,
     private deleteUserService: DeleteUserService,
   ) {}
@@ -90,6 +90,6 @@ export class UserController {
       );
     }
 
-    return this.upaloadAvatarUserService.execute(id, avatar);
+    return this.uploadAvatarUserService.execute(id, avatar);
   }
 }

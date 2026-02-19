@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY_TOKEN_USER } from '../utils/usersTokens';
 import type { IUserRepository } from '../domain/repositories/Iusers.repository';
 import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs/promises';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class UpdateAvatarUserService {
@@ -14,7 +14,9 @@ export class UpdateAvatarUserService {
   async execute(id: number, file: Express.Multer.File) {
     const user = await this.userRepositories.getByIdUser(id);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     if (user.avatar) {
       try {
@@ -25,13 +27,14 @@ export class UpdateAvatarUserService {
       }
     }
 
-    const uploaded = await cloudinary.uploader.upload(file.path, {
+    const result = await cloudinary.uploader.upload(file.path, {
       folder: 'users',
       resource_type: 'image',
     });
-    await fs.unlink(file.path);
 
-    return this.userRepositories.uploadAvatar(id, uploaded.secure_url);
+    await unlink(file.path);
+
+    return this.userRepositories.uploadAvatar(id, result.secure_url);
   }
 
   private extractPublicId(url: string): string {
